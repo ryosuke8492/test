@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ECサイト</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>ECサイト</h1>
+        <a href="cart.html">カート (<span id="cart-count">0</span>)</a>
+    </header>
+    
+    <main>
+        <h2>商品一覧</h2>
+        <input type="text" id="search" placeholder="商品名で検索">
+        <button onclick="searchProduct()">検索</button>
+        <table id="product-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>商品名</th>
+                    <th>価格</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- 商品リストがここに追加される -->
+            </tbody>
+        </table>
+        <button onclick="downloadCSV()">CSVダウンロード</button>
+    </main>
+    
+    <script src="script.js"></script>
+</body>
+</html>
