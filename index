@@ -1,0 +1,106 @@
+// 商品データをローカルストレージから読み込み
+let products = JSON.parse(localStorage.getItem("products")) || [];
+
+// 商品の登録
+document.getElementById("product-form").addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    const productId = document.getElementById("product-id").value;
+    const productName = document.getElementById("product-name").value;
+    const productPrice = parseFloat(document.getElementById("product-price").value);
+
+    if (productId && productName && productPrice) {
+        const product = { id: productId, name: productName, price: productPrice };
+        products.push(product);
+        localStorage.setItem("products", JSON.stringify(products));
+        renderProducts();
+        document.getElementById("product-form").reset();
+    }
+});
+
+// 商品の表示
+function renderProducts() {
+    const tbody = document.querySelector("#product-table tbody");
+    tbody.innerHTML = "";
+
+    products.forEach((product, index) => {
+        const tr = document.createElement("tr");
+
+        tr.innerHTML = `
+            <td>${product.id}</td>
+            <td>${product.name}</td>
+            <td>${product.price}</td>
+            <td>
+                <button onclick="editProduct(${index})">編集</button>
+                <button onclick="deleteProduct(${index})">削除</button>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+
+    // カートのアイテム数を更新
+    document.getElementById("cart-count").textContent = products.length;
+}
+
+// 商品の編集
+function editProduct(index) {
+    const product = products[index];
+    document.getElementById("product-id").value = product.id;
+    document.getElementById("product-name").value = product.name;
+    document.getElementById("product-price").value = product.price;
+
+    deleteProduct(index); // 編集時に一度削除し、登録を更新する
+}
+
+// 商品の削除
+function deleteProduct(index) {
+    products.splice(index, 1);
+    localStorage.setItem("products", JSON.stringify(products));
+    renderProducts();
+}
+
+// 商品の検索
+function searchProduct() {
+    const searchTerm = document.getElementById("search").value.toLowerCase();
+    const filteredProducts = products.filter(product => 
+        product.name.toLowerCase().includes(searchTerm)
+    );
+    
+    renderFilteredProducts(filteredProducts);
+}
+
+// 検索結果の表示
+function renderFilteredProducts(filteredProducts) {
+    const tbody = document.querySelector("#product-table tbody");
+    tbody.innerHTML = "";
+
+    filteredProducts.forEach((product, index) => {
+        const tr = document.createElement("tr");
+
+        tr.innerHTML = `
+            <td>${product.id}</td>
+            <td>${product.name}</td>
+            <td>${product.price}</td>
+            <td>
+                <button onclick="editProduct(${index})">編集</button>
+                <button onclick="deleteProduct(${index})">削除</button>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+// CSVダウンロード
+function downloadCSV() {
+    const csvContent = "ID,商品名,価格\n" + products.map(product => `${product.id},${product.name},${product.price}`).join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "products.csv";
+    link.click();
+}
+
+// ページロード時に商品を表示
+window.onload = function() {
+    renderProducts();
+};
